@@ -1,35 +1,66 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
-function App() {
-  const [count, setCount] = useState(0)
+import { ErrorElement } from './components';
+import {
+  HomeLayout,
+  Landing,
+  Error,
+  Products,
+  SingleProduct,
+  Cart,
+  About,
+  Register,
+  Login,
+  Checkout,
+  Orders,
+} from './pages';
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+// loaders
+import { loader as landingLoader } from './pages/Landing';
+import { loader as singleProductLoader } from './pages/SingleProduct';
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <HomeLayout />,
+    errorElement: <Error />,
+    children: [
+      {
+        index: true,
+        element: <Landing />,
+        errorElement: <ErrorElement />,
+        loader: landingLoader,
+      },
+      {
+        path: 'about',
+        element: <About />,
+        errorElement: <ErrorElement />,
+      },
+      {
+        path: 'products',
+        element: <Products />,
+        errorElement: <ErrorElement />,
+      },
+      {
+        path: 'products/:id',
+        element: <SingleProduct />,
+        errorElement: <ErrorElement />,
+        loader: singleProductLoader,
+      },
+    ],
+  },
+  {
+    path: '/login',
+    element: <Login />,
+    errorElement: <Error />,
+  },
+  {
+    path: '/register',
+    element: <Register />,
+    errorElement: <Error />,
+  },
+]);
+
+export default function App() {
+  return <RouterProvider router={router} />;
 }
-
-export default App
