@@ -11,13 +11,20 @@ import {
   About,
   Register,
   Login,
-  Checkout,
-  Orders,
+  // Checkout,
+  // Orders,
 } from './pages';
 
 // loaders
 import { loader as landingLoader } from './pages/Landing';
+import { loader as productsLoader } from './pages/Products';
 import { loader as singleProductLoader } from './pages/SingleProduct';
+
+// actions
+import { action as registerAction } from './pages/Register';
+import { action as loginAction } from './pages/Login';
+
+import { store } from './store';
 
 const router = createBrowserRouter([
   {
@@ -40,6 +47,7 @@ const router = createBrowserRouter([
         path: 'products',
         element: <Products />,
         errorElement: <ErrorElement />,
+        loader: productsLoader,
       },
       {
         path: 'products/:id',
@@ -47,17 +55,24 @@ const router = createBrowserRouter([
         errorElement: <ErrorElement />,
         loader: singleProductLoader,
       },
+      {
+        path: 'cart',
+        element: <Cart />,
+        errorElement: <ErrorElement />,
+      },
     ],
   },
   {
     path: '/login',
     element: <Login />,
     errorElement: <Error />,
+    action: loginAction(store),
   },
   {
     path: '/register',
     element: <Register />,
     errorElement: <Error />,
+    action: registerAction,
   },
 ]);
 
