@@ -1,4 +1,6 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { ErrorElement } from './components';
 import {
@@ -29,6 +31,14 @@ import { action as checkoutAction } from './components/CheckoutForm';
 
 import { store } from './store';
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5,
+    },
+  },
+});
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -39,7 +49,7 @@ const router = createBrowserRouter([
         index: true,
         element: <Landing />,
         errorElement: <ErrorElement />,
-        loader: landingLoader,
+        loader: landingLoader(queryClient),
       },
       {
         path: 'about',
@@ -50,13 +60,13 @@ const router = createBrowserRouter([
         path: 'products',
         element: <Products />,
         errorElement: <ErrorElement />,
-        loader: productsLoader,
+        loader: productsLoader(queryClient),
       },
       {
         path: 'products/:id',
         element: <SingleProduct />,
         errorElement: <ErrorElement />,
-        loader: singleProductLoader,
+        loader: singleProductLoader(queryClient),
       },
       {
         path: 'cart',
@@ -68,13 +78,13 @@ const router = createBrowserRouter([
         element: <Checkout />,
         errorElement: <ErrorElement />,
         loader: checkoutLoader(store),
-        action: checkoutAction(store),
+        action: checkoutAction(store, queryClient),
       },
       {
         path: 'orders',
         element: <Orders />,
         errorElement: <ErrorElement />,
-        loader: ordersLoader(store),
+        loader: ordersLoader(store, queryClient),
       },
     ],
   },
@@ -93,5 +103,10 @@ const router = createBrowserRouter([
 ]);
 
 export default function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  );
 }
